@@ -836,6 +836,13 @@ describe('parse', function() {
 
   describe('scope', function () {
 
+    it('can support properties that include the $ char in the name', function() {
+      var scope = {
+        '$a' : 4
+      }
+      assert.deepEqual(math.parse('$a').compile(math).eval(scope), 4);
+    });
+
     it('should use a given scope for assignments', function() {
       var scope = {
         a: 3,

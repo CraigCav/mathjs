@@ -839,8 +839,20 @@ describe('parse', function() {
     it('can support properties that include the $ char in the name', function() {
       var scope = {
         '$a' : 4
-      }
+      };
       assert.deepEqual(math.parse('$a').compile(math).eval(scope), 4);
+    });
+
+    it('should pass scope as this', function() {
+      math.import({
+        scopetest: function () {
+          return this;
+        }
+      }, { wrap: false });
+
+      var scope = { foo: 'bar' };
+
+      assert.equal(parseAndEval('scopetest()', scope), scope);
     });
 
     it('should use a given scope for assignments', function() {

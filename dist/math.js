@@ -7,7 +7,7 @@
  * mathematical functions, and a flexible expression parser.
  *
  * @version 0.18.1
- * @date    2015-07-16
+ * @date    2015-07-30
  *
  * @license
  * Copyright (C) 2013-2014 Jos de Jong <wjosdejong@gmail.com>
@@ -11722,6 +11722,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return add(x, +y);
 	    }
 
+	    if(Object(x).add && isNumber(+Object(y))) {
+	      return x.add(y);
+	    }
+
+	    if(Object(y).add && isNumber(+Object(x))) {
+	      return y.add(x);
+	    }
+
 	    if (!!x && !!y && isNumber(+x) && isNumber(+y) && (!isUnit(x) && !isUnit(y)) && (!isString(x) && !isString(y))) {
 	      return add(+x, +y);
 	    }
@@ -14292,6 +14300,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    if (isBoolean(y)) {
 	      return subtract(x, +y);
+	    }
+
+	    if(Object(x).subtract && isNumber(+Object(y))) {
+	      return x.subtract(y);
 	    }
 
 	    if (!!x && !!y && isNumber(+x) && isNumber(+y) && (!isUnit(x) && !isUnit(y)) && (!isString(x) && !isString(y))) {

@@ -108,4 +108,25 @@ describe('subtract', function() {
     assert.deepEqual(a6.valueOf(), [[-4,-4],[-4,-4]]);
   });
 
+  it('should subtract from objects that have a subtract function', function() {
+    var a = {
+      subtract: function(y) {
+        return 6 - Number(y);
+      }
+    };
+    var b = 3;
+    assert.equal(subtract(a, b), 3);
+  });
+
+  it('should add subtract objects with value from valueOf function if the value is a number', function() {
+    var a = {
+      valueOf: function() {
+        return 5;
+      }
+    };
+    var b = 3;
+    assert.equal(subtract(a, b), 2);
+    assert.equal(subtract(b, a), -2);
+  });
+
 });

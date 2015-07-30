@@ -106,4 +106,25 @@ describe('add', function() {
     assert.deepEqual(c, math.matrix([4,4,4]));
   });
 
+  it('should add objects using add function', function() {
+    var a = {
+      add: function(y) {
+        return 6 + Number(y);
+      }
+    };
+    var b = 3;
+    assert.equal(add(a, b), 9);
+    assert.equal(add(b, a), 9);
+  });
+
+  it('should add objects objects with value from valueOf function if the value is a number', function() {
+    var a = {
+      valueOf: function() {
+        return 2;
+      }
+    };
+    var b = 3;
+    assert.equal(add(a, b), 5);
+    assert.equal(add(b, a), 5);
+  });
 });

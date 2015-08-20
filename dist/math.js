@@ -7,7 +7,7 @@
  * mathematical functions, and a flexible expression parser.
  *
  * @version 0.18.1
- * @date    2015-07-30
+ * @date    2015-08-20
  *
  * @license
  * Copyright (C) 2013-2014 Jos de Jong <wjosdejong@gmail.com>
@@ -6522,9 +6522,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'BIT': {}           // bit (digital)
 	};
 
-	BASE_UNIT_NONE = {};
+	var BASE_UNIT_NONE = {};
 
-	UNIT_NONE = {'name': '', 'base': BASE_UNIT_NONE, 'value': 1, 'offset': 0};
+	var UNIT_NONE = {'name': '', 'base': BASE_UNIT_NONE, 'value': 1, 'offset': 0};
 
 	var UNITS = {
 	  // length

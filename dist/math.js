@@ -7,7 +7,7 @@
  * mathematical functions, and a flexible expression parser.
  *
  * @version 0.18.1
- * @date    2015-08-20
+ * @date    2015-08-24
  *
  * @license
  * Copyright (C) 2013-2014 Jos de Jong <wjosdejong@gmail.com>
@@ -8226,6 +8226,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	    getToken();
 	    if (token != '"') {
 	      throw createSyntaxError('End of string " expected');
+	    }
+	    getToken();
+
+	    // create constant
+	    node = new ConstantNode('string', str);
+
+	    // parse parameters
+	    node = parseParams(node);
+
+	    return node;
+	  }
+
+	  if (token == '\'') {
+	    // string "..."
+	    str = '';
+	    tPrev = '';
+	    while (c != '' && (c != '\'' || tPrev == '\\')) { // also handle escape character
+	      str += c;
+	      tPrev = c;
+	      next();
+	    }
+
+	    getToken();
+	    if (token != '\'') {
+	      throw createSyntaxError('End of string \' expected');
 	    }
 	    getToken();
 

@@ -1070,6 +1070,12 @@ describe('parse', function() {
       assert.deepEqual(parseAndEval('[2,3] != [2,4]'), math.matrix([false, true]));
     });
 
+    it('should parse unequal <>', function() {
+      assert.strictEqual(parseAndEval('2 <> 3'), true);
+      assert.strictEqual(parseAndEval('2 <> 2'), false);
+      assert.deepEqual(parseAndEval('[2,3] <> [2,4]'), math.matrix([false, true]));
+    });
+
     it('should parse conditional expression a ? b : c', function() {
       assert.equal(parseAndEval('2 ? true : false'), true);
       assert.equal(parseAndEval('0 ? true : false'), false);

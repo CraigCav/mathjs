@@ -956,12 +956,17 @@ describe('parse', function() {
       assert.strictEqual(parseAndEval('not not not 2'), false);
       assert.strictEqual(parseAndEval('not true'), false);
 
-      assert.strictEqual(parseAndEval('4*not 2'), 0);
-      assert.strictEqual(parseAndEval('4 * not 2'), 0);
-      assert.strictEqual(parseAndEval('4-not 2'), 4);
-      assert.strictEqual(parseAndEval('4 - not 2'), 4);
-      assert.strictEqual(parseAndEval('4+not 2'), 4);
-      assert.strictEqual(parseAndEval('4 + not 2'), 4);
+      assert.strictEqual(parseAndEval('!2'), false);
+      assert.strictEqual(parseAndEval('!!2'), true);
+      assert.strictEqual(parseAndEval('!!!2'), false);
+      assert.strictEqual(parseAndEval('!true'), false);
+
+      assert.strictEqual(parseAndEval('4*!2'), 0);
+      assert.strictEqual(parseAndEval('4 *!2'), 0);
+      assert.strictEqual(parseAndEval('4-!2'), 4);
+      assert.strictEqual(parseAndEval('4 - !2'), 4);
+      assert.strictEqual(parseAndEval('4+!2'), 4);
+      assert.strictEqual(parseAndEval('4 + !2'), 4);
 
       assert.strictEqual(parseAndEval('10+not not 3'), 11);
     });

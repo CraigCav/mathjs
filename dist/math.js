@@ -7,7 +7,7 @@
  * mathematical functions, and a flexible expression parser.
  *
  * @version 2.3.0
- * @date    2015-09-19
+ * @date    2015-09-21
  *
  * @license
  * Copyright (C) 2013-2015 Jos de Jong <wjosdejong@gmail.com>
@@ -23121,10 +23121,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    '==': true,
 	    '!=': true,
+	    '<>': true,
 	    '<': true,
 	    '>': true,
 	    '<=': true,
 	    '>=': true,
+	    '&&': true,
+	    '||': true,
 
 	    '<<': true,
 	    '>>': true,
@@ -23317,7 +23320,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // check for variables, functions, named operators
 	    if (isAlpha(c)) {
-	      while (isAlpha(c) || isDigit(c)) {
+	      while (isAlpha(c) || isDigit(c) || (c === '.' && nextPreview() !== '*')) {
 	        token += c;
 	        next();
 	      }
@@ -23383,7 +23386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // Note: In ES6 will be unicode aware:
 	    //   http://stackoverflow.com/questions/280712/javascript-unicode-regexes
 	    //   https://mathiasbynens.be/notes/es6-unicode-regex
-	    return /^[a-zA-Z_\u00C0-\u02AF\u0370-\u03FF]$/.test(c);
+	    return /^[a-zA-Z_$\u00C0-\u02AF\u0370-\u03FF]$/.test(c);
 	  }
 
 	  /**
@@ -23602,7 +23605,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function parseLogicalOr() {
 	    var node = parseLogicalXor();
 
-	    while (token == 'or') {
+	    while (token == 'or' || token == '||') {
 	      getTokenSkipNewline();
 	      node = new OperatorNode('or', 'or', [node, parseLogicalXor()]);
 	    }
@@ -23634,7 +23637,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function parseLogicalAnd() {
 	    var node = parseBitwiseOr();
 
-	    while (token == 'and') {
+	    while (token == 'and' || token == '&&') {
 	      getTokenSkipNewline();
 	      node = new OperatorNode('and', 'and', [node, parseBitwiseOr()]);
 	    }
@@ -23703,6 +23706,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    operators = {
 	      '==': 'equal',
 	      '!=': 'unequal',
+	      '<>': 'unequal',
 	      '<': 'smaller',
 	      '>': 'larger',
 	      '<=': 'smallerEq',
@@ -23913,6 +23917,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      '-': 'unaryMinus',
 	      '+': 'unaryPlus',
 	      '~': 'bitNot',
+	      '!': 'not',
 	      'not': 'not'
 	    }[token];
 
@@ -24168,6 +24173,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	      getToken();
 	      if (token != '"') {
 	        throw createSyntaxError('End of string " expected');
+	      }
+	      getToken();
+
+	      // create constant
+	      node = new ConstantNode(str, 'string');
+
+	      // parse index parameters
+	      node = parseIndex(node);
+
+	      return node;
+	    }
+
+	    if (token == '\'') {
+	      // string "..."
+	      str = '';
+	      tPrev = '';
+	      while (c != '' && (c != '\'' || tPrev == '\\')) { // also handle escape character
+	        str += c;
+	        tPrev = c;
+	        next();
+	      }
+
+	      getToken();
+	      if (token != '\'') {
+	        throw createSyntaxError('End of string \' expected');
 	      }
 	      getToken();
 
@@ -26540,7 +26570,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    defs['undef'] = undef;
 	    defs['Unit'] = Unit;
 
-	    if (this.name in defs.args) {
+	    if (this.name.indexOf('.') > -1) {
+	      // for expression 'a.b.c.d'
+	      // generate expression 'scope.a && scope.a.b && scope.a.b.c && scope.a.b.c.d || null'
+	      var expression = this.name.split('.')
+	        .reduce(function(exp, param) {
+	          exp.push( (exp.slice(-1)[0] || '') + '.' + param );
+	          return exp;
+	        }, [])
+	        .map(function(x) {
+	          return 'scope' + x;
+	        })
+	        .join(' && ');
+
+	      return expression + ' !== undefined ? ' + expression + ' : null';
+	    }
+	    else if (this.name in defs.args) {
 	      // this is a FunctionAssignment argument
 	      // (like an x when inside the expression of a function assignment `f(x) = ...`)
 	      return this.name;

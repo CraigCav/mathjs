@@ -1570,6 +1570,13 @@ describe('parse', function() {
       assert.deepEqual(parse('v.w.x.y.z').compile().eval(scope), null);
     });
 
+    it('pasrse properties with $ prefix', function() {
+      var scope = {
+        '$a' : 4
+      };
+      assert.deepEqual(parse('$a').compile().eval(scope), 4);
+    });
+
   });
 
   describe('errors', function () {

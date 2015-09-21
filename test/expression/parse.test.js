@@ -868,6 +868,13 @@ describe('parse', function() {
       assert.strictEqual(parseAndEval('2 <= 1'), false);
     });
 
+    it('should parse logical and &&', function() {
+      assert.strictEqual(parseAndEval('true && true'), true);
+      assert.strictEqual(parseAndEval('true && false'), false);
+      assert.strictEqual(parseAndEval('false && true'), false);
+      assert.strictEqual(parseAndEval('false && false'), false);
+    });
+
     it('should parse bitwise and &', function() {
       assert.strictEqual(parseAndEval('2 & 6'), 2);
       assert.strictEqual(parseAndEval('5 & 3'), 1);
@@ -884,6 +891,13 @@ describe('parse', function() {
       assert.strictEqual(parseAndEval('true ^| false'), 1);
       assert.strictEqual(parseAndEval('false ^| true'), 1);
       assert.strictEqual(parseAndEval('false ^| false'), 0);
+    });
+
+    it('should parse logical or ||', function() {
+      assert.strictEqual(parseAndEval('true || true'), true);
+      assert.strictEqual(parseAndEval('true || false'), true);
+      assert.strictEqual(parseAndEval('false || true'), true);
+      assert.strictEqual(parseAndEval('false || false'), false);
     });
 
     it('should parse bitwise or |', function() {

@@ -591,6 +591,15 @@ describe('parse', function() {
       assert.equal(parseAndEval('false'), false);
     });
 
+    it('should parse boolean values on scope', function() {
+      var scope = {};
+      scope.a = true;
+      scope.b = false;
+      assert.equal(parseAndEval('a', scope), true);
+      assert.equal(parseAndEval('b', scope), false);
+      assert.equal(parseAndEval('a.b', { a: { b: false }}), false);
+    });
+
   });
 
 
@@ -1535,6 +1544,30 @@ describe('parse', function() {
     it('should evaluate a symbol with value null or undefined', function () {
       assert.equal(parse('a').compile().eval({a: null}), null);
       assert.equal(parse('a').compile().eval({a: undefined}), undefined);
+    });
+
+    it('should parse nested objects in scope', function() {
+      var scope = {
+        a: {
+          b: {
+            c: 4
+          },
+          d: 5
+        }
+      };
+
+      assert.deepEqual(parse('a.b.c').compile().eval(scope), 4);
+      assert.deepEqual(parse('a.d').compile().eval(scope), 5);
+    });
+
+    it('should return null if any part of a nested object is empty', function() {
+      var scope = {
+        a: { b: null },
+        v: { w: { x: null } }
+      };
+
+      assert.deepEqual(parse('a.b.c').compile().eval(scope), null);
+      assert.deepEqual(parse('v.w.x.y.z').compile().eval(scope), null);
     });
 
   });

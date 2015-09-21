@@ -250,11 +250,15 @@ describe('parse', function() {
     it('should parse a string', function() {
       assert.deepEqual(parseAndEval('"hello"'), "hello");
       assert.deepEqual(parseAndEval('   "hi" '), "hi");
+      assert.deepEqual(parseAndEval('\'hello\''), "hello");
+      assert.deepEqual(parseAndEval('   \'hi\' '), "hi");
     });
 
     it('should throw an error with invalid strings', function() {
       assert.throws(function () {parseAndEval('"hi'); }, SyntaxError);
       assert.throws(function () {parseAndEval(' hi" '); }, Error);
+      assert.throws(function () {parseAndEval('\'hi'); }, SyntaxError);
+      assert.throws(function () {parseAndEval(' hi\' '); }, Error);
     });
 
     it('should get a string subset', function() {
@@ -1200,7 +1204,7 @@ describe('parse', function() {
         assert.equal(parseAndEval('3!+2'), 8);
         assert.equal(parseAndEval('(3!)+2'), 8);
         assert.equal(parseAndEval('+4!'), 24);
-        
+
         assert.equal(parseAndEval('~4!+1'), -24);
         assert.equal(parseAndEval('~(4!)+1'), -24);
 
